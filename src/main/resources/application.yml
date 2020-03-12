@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 1800s
+  compression:
+    enabled: true
+    mime-types: application/json
+system:
+  version: 0.1
+spring:
+  application:
+    name: fruit
+  profiles:
+    active: dev
