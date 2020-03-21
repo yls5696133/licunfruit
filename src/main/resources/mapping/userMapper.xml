@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.licunfruit.dao.UserMapper">
+    <resultMap id="UserResultMap" type="com.example.licunfruit.bean.User" >
+        <id column="uid" property="id" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="UserResultMapWithRole" type="com.example.licunfruit.bean.User" >
+        <id column="uid" property="id" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <collection property="roles" ofType="com.example.licunfruit.bean.Role">
+            <id column="rid" property="id" jdbcType="INTEGER" />
+            <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+            <collection property="menus" ofType="com.example.licunfruit.bean.Menu">
+                <id column="mid" property="id" jdbcType="INTEGER" />
+                <result column="menuName" property="menuName" jdbcType="VARCHAR" />
+                <result column="parentId" property="parentId" jdbcType="INTEGER" />
+            </collection>
+        </collection>
+    </resultMap>
+    
+    <sql id="BaseColumn" >
+        uid, username, password
+    </sql>
+
+    <select id="findUserById" parameterType="Integer" resultMap="UserResultMap">
+        select
+        <include refid="BaseColumn"/>
+        from user where uid = #{userId}
+    </select>
+
+    <select id="findUserByUsername"  resultMap="UserResultMapWithRole">
+        select u.*, r.*, m.*
+        from user u
+            INNER join user_role ur on ur.userId = u.uid
+            INNER join role r on r.rid = ur.roleId
+            INNER join role_menu rm on rm.roleId = r.rid
+            INNER join menu m on m.mid = rm.menuId
+        where u.username = #{username}
+    </select>
+
+</mapper>
